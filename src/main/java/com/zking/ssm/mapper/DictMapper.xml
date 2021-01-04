@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zking.ssm.mapper.DictMapper" >
+  <resultMap id="BaseResultMap" type="com.zking.ssm.model.Dict" >
+    <constructor >
+      <idArg column="dict_id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_code" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_value" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <resultMap id="dict" type="com.zking.ssm.model.Dict" >
+    <constructor >
+      <idArg column="dict_id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_code" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_value" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="dict_remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dict_id, dict_code, dict_value, dict_type, dict_remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_dict
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_dict
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zking.ssm.model.Dict" >
+    insert into t_dict (dict_id, dict_code, dict_value, 
+      dict_type, dict_remark)
+    values (#{dictId,jdbcType=VARCHAR}, #{dictCode,jdbcType=VARCHAR}, #{dictValue,jdbcType=VARCHAR}, 
+      #{dictType,jdbcType=VARCHAR}, #{dictRemark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zking.ssm.model.Dict" >
+    insert into t_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dictId != null" >
+        dict_id,
+      </if>
+      <if test="dictCode != null" >
+        dict_code,
+      </if>
+      <if test="dictValue != null" >
+        dict_value,
+      </if>
+      <if test="dictType != null" >
+        dict_type,
+      </if>
+      <if test="dictRemark != null" >
+        dict_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dictId != null" >
+        #{dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="dictCode != null" >
+        #{dictCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dictValue != null" >
+        #{dictValue,jdbcType=VARCHAR},
+      </if>
+      <if test="dictType != null" >
+        #{dictType,jdbcType=VARCHAR},
+      </if>
+      <if test="dictRemark != null" >
+        #{dictRemark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zking.ssm.model.Dict" >
+    update t_dict
+    <set >
+      <if test="dictCode != null" >
+        dict_code = #{dictCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dictValue != null" >
+        dict_value = #{dictValue,jdbcType=VARCHAR},
+      </if>
+      <if test="dictType != null" >
+        dict_type = #{dictType,jdbcType=VARCHAR},
+      </if>
+      <if test="dictRemark != null" >
+        dict_remark = #{dictRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zking.ssm.model.Dict" >
+    update t_dict
+    set dict_code = #{dictCode,jdbcType=VARCHAR},
+      dict_value = #{dictValue,jdbcType=VARCHAR},
+      dict_type = #{dictType,jdbcType=VARCHAR},
+      dict_remark = #{dictRemark,jdbcType=VARCHAR}
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </update>
+  <select id="listPermissionsByUserName" resultMap="dict" parameterType="com.zking.ssm.model.Dict">
+    select
+    <include refid="Base_Column_List" />
+    from t_dict
+    where 1=1
+    <if test="dictCode != null">
+      and dict_remark LIKE CONCAT(CONCAT('%',#{dictCode,jdbcType=BIGINT}),'%')
+    </if>
+  </select>
+</mapper>
