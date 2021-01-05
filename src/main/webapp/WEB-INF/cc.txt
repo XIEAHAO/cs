@@ -1,0 +1,272 @@
+<template>
+  <!-- 联系人 -->
+  <div>
+    <!-- 导航条 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-top: 15px; margin-left: 10px; font-size: 1.17em;">
+      <el-breadcrumb-item>客户信息管理</el-breadcrumb-item>
+      <el-breadcrumb-item>客户信息</el-breadcrumb-item>
+      <el-breadcrumb-item>联系人</el-breadcrumb-item>
+    </el-breadcrumb><br />
+    <!-- 按钮 -->
+    <el-row type="flex" class="row-bg" justify="end">
+      <el-button size="small" @click="handleEdit">帮助</el-button>
+      <el-button size="small" @click="select" v-if="show">查询</el-button>
+      <el-button size="small" @click="add">新建</el-button>
+      <el-button size="small" @click="back">返回</el-button>
+      <el-button size="small" @click="test">测试</el-button>
+    </el-row><br />
+    <!-- 客户信息 -->
+    <el-form inline="true" align="center">
+      <el-form-item label="客户编号" style="margin-left: 42px;" prop="lkmCustNo">
+        <el-input v-model="custNo" disabled="disabledinput"></el-input>
+      </el-form-item>
+      <el-form-item label="客户名称" style="margin-left: 114px;" prop="lkmCustName">
+        <el-input v-model="custName" placeholder="客户名称" disabled="disabledinput"></el-input>
+      </el-form-item>
+
+
+    </el-form>
+    <!-- 表格栏 -->
+    <el-table :data="bookList" style="width: 100%;" :border="true" max-height="550" :header-cell-style="{background:'#F2F6FC'}">
+      <el-table-column type="expand"></el-table-column>
+      <el-table-column prop="lkmName" label="姓名" min-width="30" align="center"></el-table-column>
+      <el-table-column prop="lkmId" label="编号" min-width="30" align="center" v-if="show"></el-table-column>
+      <el-table-column prop="lkmSex" label="性别" min-width="40" align="center"></el-table-column>
+      <el-table-column prop="lkmPostion" label="职位" min-width="40" align="center"></el-table-column>
+      <el-table-column prop="lkmTel" label="办公电话" min-width="40" align="center"></el-table-column>
+      <el-table-column prop="lkmMobile" label="手机" min-width="40" align="center"></el-table-column>
+      <el-table-column prop="lkmMemo" label="备注" min-width="40" align="center"></el-table-column>
+      <el-table-column label="操作" align="center">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="update(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="sc(scope.$index, scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 新增 -->
+    <!-- 弹框-->
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" @close="closeDialog">
+
+      <!-- 按钮 -->
+      <el-row type="flex" class="row-bg" justify="end">
+        <el-button size="small" @click="handleEdit">帮助</el-button>
+        <el-button size="small" @click="dialogFormVisible = false">返回</el-button>
+        <el-button size="small" @click="doSave">保存</el-button>
+      </el-row>
+      <br />
+      <el-form :model="bookForm" style="width: 100%;">
+        <el-form-item label="姓名" prop="lkmName">
+          <el-input v-model="bookForm.lkmNamea" placeholder="姓名" autocomplete="off"></el-input>
+        </el-form-item>
+        
+	<el-form-item label="性别" prop="lkmSex">
+          <el-radio v-model="bookForm.lkmSexa" label="男" value="男" autocomplete="off">男</el-radio>
+          <el-radio v-model="bookForm.lkmSexa" label="女" value="女" autocomplete="off">女</el-radio>
+        </el-form-item><br />
+        <el-form-item label="职位" prop="lkmPostion" >
+          <el-input v-model="bookForm.lkmPostiona" placeholder="职位" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="办公电话" prop="lkmTel">
+          <el-input v-model="bookForm.lkmTela" placeholder="办公电话" autocomplete="off"></el-input>
+        </el-form-item><br />
+        <el-form-item label="手机" prop="lkmMobile">
+          <el-input v-model="bookForm.lkmMobilea" placeholder="手机" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="lkmMemo">
+          <el-input v-model="bookForm.lkmMemoa" placeholder="备注" autocomplete="off"></el-input>
+
+
+        </el-form-item><br />
+      </el-form>
+    </el-dialog>
+
+
+
+  </div>
+</template>
+
+<script>
+  export default {
+    data: function() {
+      return {
+        disabledinput:true,
+        page: 1,
+        rows: 10,
+        total: 0,
+        show:false,
+        lkmCustNo:'',
+        lkmCustName:'',
+        lkmName:'',
+        lkmSex:'',
+        lkmPostion:'',
+        lkmMobile:'',
+        lkmMemo:'',
+        custNo:this.$route.query.custNo,
+        custName:this.$route.query.custName,
+
+        bookForm: {
+           lkmName:null,
+           llkmSex: null,
+           llkmPostion: null,
+           llkmTel: null,
+           llkmMobile: null,
+           llkmMemo: null,
+           lkmId:null
+        },
+
+
+
+
+        bookList: [{
+           lkmName: null,
+           lkmPostion: null,
+           lkmTel: null,
+           lkmMobile: null,
+           lkmMemo: null,
+           lkmId:null
+        }],
+        title: "",
+        dialogFormVisible:false,
+
+      }
+    },
+    methods: {
+      //帮助
+      handleEdit() {
+        this.$alert('这是帮助', '帮助', {
+          confirmButtonText: '确定'
+        });
+      },
+      // 编辑
+      update: function(index, row) {
+        this.title = "编辑";
+        this.dialogFormVisible = true;
+
+        // console.log(row.lkmCustName);
+        console.log(row.lkmSex);
+        this.bookForm.lkmId=row.lkmId;
+         this.bookForm.lkmNamea = row.lkmName;
+         this.bookForm.lkmSexa =row.lkmSex;
+         this.bookForm.lkmPostiona = row.lkmPostion;
+         this.bookForm.lkmTela = row.lkmTel;
+         this.bookForm.lkmMobilea = row.lkmMobile;
+         this.bookForm.lkmMemoa = row.lkmMemo;
+      },
+
+      sc: function(index, row) {
+       let params = {
+          lkmId:row.lkmId
+        };
+        console.log(params);
+        this.$confirm('确认删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.axios.post(this.axios.urls.link_del, params).then(resp => {
+            let data = resp.data;
+            if (data.success) {
+              this.select(null);
+              this.$message({
+                message: data.msg,
+                type: 'success'
+              });
+            } else {
+              this.$message({
+                message: data.msg,
+                type: 'error'
+              });
+            }
+          }).catch();
+        }).catch();
+      },
+      doSave: function() {
+        let params = {
+          lkmCustNo: this.custNo,
+          lkmCustName:this.custName,
+          lkmId:this.bookForm.lkmId,
+          lkmName: this.bookForm.lkmNamea,
+          lkmSex: this.bookForm.lkmSexa,
+          lkmPostion: this.bookForm.lkmPostiona,
+          lkmTel: this.bookForm.lkmTela,
+          lkmMobile: this.bookForm.lkmMobilea,
+          lkmMemo: this.bookForm.lkmMemoa
+        };
+            let url = null;
+            if (this.title == "编辑") {
+              url = this.axios.urls.link_edit;
+            } else if (this.title =="新建") {
+              url = this.axios.urls.link_add;
+            }
+            this.axios.post(url, params).then(resp => {
+              let data = resp.data;
+              if (data.success) {
+                this.dialogFormVisible = false;
+                this.select(null);
+                this.$message({
+                  message: data.msg,
+                  type: 'sucess'
+                });
+              } else {
+                this.$message({
+                  message: data.msg,
+                  type: 'error'
+                });
+              }
+            }).catch();
+
+      },
+      //查询
+      select: function() {
+        let params = {
+          lkmId:this.lkmId,
+          lkmName: this.lkmName,
+          lkmSex: this.lkmSex,
+          lkmPostion: this.lkmPostion,
+          lkmTel: this.lkmTel,
+          lkmMobile: this.lkmMobile,
+          lkmMemo: this.lkmMemo,
+          lkmCustNo:this.custNo,
+          lkmCustName:this.custName,
+        };
+        this.axios.post(this.axios.urls.Cst_select, params)
+          .then(resp => {
+            this.bookList = resp.data.data;
+          }).catch();
+      },
+      //打开新增书本
+      add: function() {
+        this.title = "新建";
+        this.dialogFormVisible = true;
+      },
+      closeDialog: function() {
+        //清空表单中的数据信息      bookForm.lkmName   lkmSex lkmPostion  lkmTel  lkmMobile  lkmMemo
+        this.bookForm.lkmName = null;
+        this.bookForm.lkmSex = null;
+        this.bookForm.lkmPostion = null;
+        this.bookForm.lkmTel = null;
+        this.bookForm.lkmMobile = null;
+        this.bookForm.lkmMemo = null;
+        //清空表单验证
+        this.$refs['bf'].resetFields();
+        //将对话框的标题改为新增
+        this.title = "书本新增";
+      },
+      // 返回
+      back() {
+        this.$router.push({
+          path:'/khgl/kh',
+        })
+      }
+
+    },
+    created:function(){
+      this.select(null);
+      console.log(this.custNo);
+
+    }
+  }
+</script>
+
+<style>
+</style>
